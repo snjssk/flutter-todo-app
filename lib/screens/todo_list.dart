@@ -1,3 +1,4 @@
+import 'package:first_app/screens/todo_detail.dart';
 import 'package:flutter/material.dart';
 
 class TodoList extends StatefulWidget {
@@ -19,6 +20,7 @@ class _TodoListState extends State<TodoList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint('FAB clicked');
+          navigateToDetail('add todo');
         },
         tooltip: 'add',
         child: Icon(Icons.add),
@@ -27,7 +29,7 @@ class _TodoListState extends State<TodoList> {
   }
 
   ListView getTodoListView() {
-    //
+    // title
     TextStyle titleStyle = Theme.of(context).textTheme.subhead;
 
     return ListView.builder(
@@ -46,10 +48,17 @@ class _TodoListState extends State<TodoList> {
             trailing: Icon(Icons.delete, color: Colors.grey,),
             onTap: () {
               debugPrint('Tap');
+              navigateToDetail('edit todo');
             },
           ),
         );
       },
     );
+  }
+
+  void navigateToDetail(String title) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return TodoDetail(title);
+    }));
   }
 }
