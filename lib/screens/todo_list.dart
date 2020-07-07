@@ -1,5 +1,9 @@
-import 'package:first_app/screens/todo_detail.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:first_app/models/todo.dart';
+import 'package:first_app/utils/database_helper.dart';
+import 'package:first_app/screens/todo_detail.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TodoList extends StatefulWidget {
   @override
@@ -8,10 +12,18 @@ class TodoList extends StatefulWidget {
 
 class _TodoListState extends State<TodoList> {
 
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Todo> todoList;
   int count = 0;
 
   @override
   Widget build(BuildContext context) {
+
+    // 値がない場合にここで初期化
+    if (todoList == null) {
+      todoList = List<Todo>();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('リスト'),
@@ -54,6 +66,39 @@ class _TodoListState extends State<TodoList> {
         );
       },
     );
+  }
+
+  // 色を決める
+  Color getPriorityColor(int priority) {
+    switch (priority) {
+      case 1:
+        return Colors.red;
+      case 2:
+        return Colors.yellow;
+      default:
+        return Colors.yellow;
+    }
+  }
+
+  // アイコンを決める
+  Icon getPriorityIcon(int priority) {
+    switch (priority) {
+      case 1:
+        return Icon(Icons.play_arrow);
+      case 2:
+        return Icon(Icons.keyboard_arrow_right);
+      default:
+        return Icon(Icons.keyboard_arrow_right);
+    }
+  }
+
+  // 削除処理
+  void _delete(BuildContext context, Todo todo) async {
+    // idを指定して削除
+    int result = await databaseHelper.deleteTodo(todo.id);
+    if (result != 0) {
+      
+    }
   }
 
   void navigateToDetail(String title) {

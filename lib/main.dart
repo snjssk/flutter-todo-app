@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:first_app/models/todo.dart';
+import 'package:first_app/utils/database_helper.dart';
 import 'package:first_app/screens/todo_list.dart';
 import 'package:first_app/screens/todo_detail.dart';
+
 
 void main() => runApp(MyApp());
 
