@@ -92,4 +92,16 @@ class DatabaseHelper {
     var result = Sqflite.firstIntValue(x);
     return result;
   }
+
+  // Get
+  Future<List<Todo>> getTodoList() async {
+    var todoMapList = await getTodoMapList();
+    var count = todoMapList.length;
+
+    List<Todo> todoList = List<Todo>();
+    for( int i = 0; i < count; i++ ) {
+      todoList.add(Todo.fromMapObject(todoMapList[i]));
+    }
+    return todoList;
+  }
 }

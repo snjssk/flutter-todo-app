@@ -22,6 +22,7 @@ class _TodoListState extends State<TodoList> {
     // 値がない場合にここで初期化
     if (todoList == null) {
       todoList = List<Todo>();
+      updateListView();
     }
 
     return Scaffold(
@@ -46,18 +47,23 @@ class _TodoListState extends State<TodoList> {
 
     return ListView.builder(
       itemCount: count,
-      itemBuilder: (BuildContext context, int postion) {
+      itemBuilder: (BuildContext context, int position) {
         return Card(
           color: Colors.white,
           elevation: 2,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.yellow,
-              child: Icon(Icons.keyboard_arrow_right),
+              backgroundColor: getPriorityColor(this.todoList[position].priority),
+              child: getPriorityIcon(this.todoList[position].priority),
             ),
-            title: Text('Dummy Title', style: titleStyle,),
-            subtitle: Text('Dummy Date'),
-            trailing: Icon(Icons.delete, color: Colors.grey,),
+            title: Text(this.todoList[position].title, style: titleStyle,),
+            subtitle: Text(this.todoList[position].date),
+            trailing: GestureDetector(
+              child: Icon(Icons.delete, color: Colors.grey,),
+              onTap: () {
+                _delete(context, todoList[position])
+              },
+            ),
             onTap: () {
               debugPrint('Tap');
               navigateToDetail('edit todo');
@@ -97,8 +103,14 @@ class _TodoListState extends State<TodoList> {
     // idを指定して削除
     int result = await databaseHelper.deleteTodo(todo.id);
     if (result != 0) {
-      
+      _showSnackBar(context, 'Delete Success');
     }
+  }
+
+  // スナックバー
+  void _showSnackBar(BuildContext context, String message) {
+    final snackBar = SnackBar(content: Text(message));
+    Scaffold.of(context).showSnackBar(snackBar);
   }
 
   void navigateToDetail(String title) {
@@ -106,4 +118,6 @@ class _TodoListState extends State<TodoList> {
       return TodoDetail(title);
     }));
   }
+
+  // updateListView
 }
