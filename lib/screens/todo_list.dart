@@ -33,7 +33,7 @@ class _TodoListState extends State<TodoList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint('FAB clicked');
-          navigateToDetail('add todo');
+          navigateToDetail(Todo('', '', 2), 'add todo');
         },
         tooltip: 'add',
         child: Icon(Icons.add),
@@ -61,12 +61,12 @@ class _TodoListState extends State<TodoList> {
             trailing: GestureDetector(
               child: Icon(Icons.delete, color: Colors.grey,),
               onTap: () {
-                _delete(context, todoList[position])
+                _delete(context, todoList[position]);
               },
             ),
             onTap: () {
               debugPrint('Tap');
-              navigateToDetail('edit todo');
+              navigateToDetail(this.todoList[position], 'edit todo');
             },
           ),
         );
@@ -104,6 +104,7 @@ class _TodoListState extends State<TodoList> {
     int result = await databaseHelper.deleteTodo(todo.id);
     if (result != 0) {
       _showSnackBar(context, 'Delete Success');
+      updateListView();
     }
   }
 
@@ -113,11 +114,32 @@ class _TodoListState extends State<TodoList> {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
-  void navigateToDetail(String title) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return TodoDetail(title);
+  // 画面遷移
+  // add, editでそれぞれ引数にtodoの値をもらう
+  // また返り値をもらうため async,await となる
+  void navigateToDetail(Todo todo, String title) async {
+    bool result = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return TodoDetail(todo, title);
     }));
+
+    if (result == true) {
+      updateListView();
+    }
   }
 
-  // updateListView
+  // 更新処理
+  // DBに接続してgetTodoListでリストを取得してstateにセット
+  void updateListView() {
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+
+      Future<List<Todo>> todoListFuture = databaseHelper.getTodoList();
+      todoListFuture.then((todoList) {
+        setState(() {
+          this.todoList = todoList;
+          this.count = todoList.length;
+        });
+      });
+    });
+  }
 }

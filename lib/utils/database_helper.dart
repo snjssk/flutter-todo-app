@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -47,8 +48,9 @@ class DatabaseHelper {
   }
   
   void _createDb(Database db, int newVersion) async {
-    await db.execute('CRATE TABLE $todoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT,'
-        '$colTitle TEXT, $colDescription TEXT, $colPriority TEXT, $colDate TEXT)');
+    debugPrint(' db create now ');
+    await db.execute('CREATE TABLE $todoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT,'
+        '$colTitle TEXT, $colDescription TEXT, $colPriority INTEGER, $colDate TEXT)');
   }
 
   // Fetch
@@ -85,7 +87,7 @@ class DatabaseHelper {
     return result;
   }
 
-  // Get
+  // Get count
   Future<int> getCount() async {
     var db = await this.database;
     List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) from $todoTable');
@@ -93,13 +95,14 @@ class DatabaseHelper {
     return result;
   }
 
-  // Get
+  // Get Map List →  Todo List
+  // DBの値をTodoの形式にして配列で返却
   Future<List<Todo>> getTodoList() async {
     var todoMapList = await getTodoMapList();
-    var count = todoMapList.length;
-
+    int count = todoMapList.length;
     List<Todo> todoList = List<Todo>();
-    for( int i = 0; i < count; i++ ) {
+
+    for (int i = 0; i < count; i++) {
       todoList.add(Todo.fromMapObject(todoMapList[i]));
     }
     return todoList;

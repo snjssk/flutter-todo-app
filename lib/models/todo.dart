@@ -56,6 +56,14 @@ class Todo {
   }
 
   // Todo Object from a Map Object
+//  Todo.fromMapObject(Map<String, dynamic> map) {
+//    this._id = map['id'];
+//    this._title = map['title'];
+//    this._description = map['description'];
+//    this._priority = map['priority'];
+//    this._date = map['date'];
+//  }
+
   Todo.fromMapObject(Map<String, dynamic> map) {
     this._id = map['id'];
     this._title = map['title'];
